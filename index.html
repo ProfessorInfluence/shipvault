@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ShipVault — 30 Apps in 30 Days</title>
+<meta name="description" content="A new indie webapp, shipped live every day for 30 days. One All-Access Pass unlocks Pro on all of them." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+  :root{
+    --bg:#0b0d10; --panel:#14171b; --panel2:#1b1f24; --border:#262b31;
+    --text:#f4f5f6; --muted:#9aa3ad; --accent:#ff6a3d; --accent2:#ffb020;
+    --good:#3ddc84; --radius:16px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);}
+  .wrap{max-width:1080px;margin:0 auto;padding:56px 24px 100px;}
+  nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:56px;}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;}
+  .logo .dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));}
+  .nav-links{display:flex;gap:24px;font-size:14px;color:var(--muted);}
+  .nav-links a{color:var(--muted);text-decoration:none;}
+  .nav-links a:hover{color:var(--text);}
+
+  .hero{text-align:center;margin-bottom:64px;}
+  .hero h1{font-size:52px;line-height:1.05;font-weight:900;letter-spacing:-0.03em;margin:0 0 16px;}
+  .hero h1 .grad{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .hero p{color:var(--muted);font-size:18px;max-width:600px;margin:0 auto 28px;}
+  .hero-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+  .btn{padding:13px 22px;border-radius:11px;font-weight:700;font-size:15px;cursor:pointer;border:1px solid var(--border);background:var(--panel2);color:var(--text);text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:.15s;}
+  .btn:hover{border-color:#3a4048;transform:translateY(-1px);}
+  .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0b0d10;border:none;}
+  .btn-primary:hover{filter:brightness(1.08);}
+
+  .stats{display:flex;justify-content:center;gap:48px;margin:40px auto 0;flex-wrap:wrap;}
+  .stat{text-align:center;}
+  .stat .num{font-size:28px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .stat .lbl{font-size:13px;color:var(--muted);margin-top:2px;}
+
+  section{margin-bottom:72px;}
+  .section-head{margin-bottom:24px;}
+  .section-head h2{font-size:26px;font-weight:800;margin:0 0 6px;letter-spacing:-0.01em;}
+  .section-head p{color:var(--muted);margin:0;font-size:15px;}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;gap:10px;transition:.15s;}
+  .card.live:hover{border-color:var(--accent);transform:translateY(-2px);}
+  .card.pending{opacity:.55;}
+  .card-top{display:flex;align-items:center;justify-content:space-between;}
+  .day-badge{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.04em;}
+  .status-live{font-size:11px;font-weight:700;color:var(--good);background:rgba(61,220,132,.12);padding:3px 9px;border-radius:20px;}
+  .status-pending{font-size:11px;font-weight:700;color:var(--muted);background:var(--panel2);padding:3px 9px;border-radius:20px;}
+  .card h3{margin:0;font-size:17px;font-weight:700;}
+  .card .idea{color:var(--muted);font-size:13px;line-height:1.4;flex:1;}
+  .card-actions{display:flex;gap:8px;margin-top:6px;}
+  .card-actions a{flex:1;text-align:center;padding:9px 0;border-radius:9px;font-size:13px;font-weight:600;text-decoration:none;}
+  .a-try{background:var(--panel2);color:var(--text);border:1px solid var(--border);}
+  .a-buy{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0b0d10;}
+
+  .pricing{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;}
+  .plan{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:28px;display:flex;flex-direction:column;gap:14px;}
+  .plan.featured{border-color:var(--accent2);background:linear-gradient(160deg,#1b140f,#14171b);}
+  .plan .tag{font-size:12px;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.06em;}
+  .plan .price{font-size:36px;font-weight:800;}
+  .plan .price span{font-size:15px;color:var(--muted);font-weight:500;}
+  .plan ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;font-size:14px;color:var(--muted);}
+  .plan ul li:before{content:"✓ ";color:var(--good);font-weight:700;}
+
+  .redeem{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:24px;text-align:center;}
+  .redeem input{padding:12px 14px;border-radius:10px;border:1px solid var(--border);background:var(--panel2);color:var(--text);font-size:15px;width:260px;margin-right:8px;}
+  #redeemMsg{margin-top:12px;font-size:14px;color:var(--muted);}
+
+  .success-box{background:linear-gradient(160deg,#12241a,#14171b);border:1px solid var(--good);border-radius:var(--radius);padding:32px;text-align:center;margin-bottom:56px;}
+  .success-box h2{margin:0 0 8px;}
+  .key-display{font-family:monospace;font-size:20px;background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:14px 20px;margin:16px auto;display:inline-block;letter-spacing:1px;}
+
+  footer{color:var(--muted);font-size:13px;text-align:center;}
+  footer a{color:var(--muted);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <div class="logo"><span class="dot"></span> ShipVault</div>
+    <div class="nav-links"><a href="#apps">Apps</a><a href="#pricing">All-Access Pass</a><a href="https://github.com/ProfessorInfluence/thirty-day-webapp-challenge" target="_blank">Build log</a></div>
+  </nav>
+
+  <div id="successBox"></div>
+
+  <div class="hero">
+    <h1>One new webapp,<br><span class="grad">shipped live every day.</span></h1>
+    <p>30 days. 30 real products. Each one solves a real problem and takes real payments. Buy one Pro upgrade for a few bucks — or grab the All-Access Pass and unlock every app in the vault, forever.</p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="#pricing">Get the All-Access Pass</a>
+      <a class="btn" href="#apps">Browse the apps</a>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="num" id="statLive">–</div><div class="lbl">apps live</div></div>
+      <div class="stat"><div class="num" id="statDay">–</div><div class="lbl">of 30 days</div></div>
+      <div class="stat"><div class="num">$0</div><div class="lbl">subscriptions required</div></div>
+    </div>
+  </div>
+
+  <section id="pricing">
+    <div class="section-head">
+      <h2>All-Access Pass</h2>
+      <p>Skip buying each app one by one. One key, every app, current and future.</p>
+    </div>
+    <div class="pricing">
+      <div class="plan">
+        <div class="tag">Monthly</div>
+        <div class="price">$19<span> / month</span></div>
+        <ul>
+          <li>Pro unlocked on every app in the vault</li>
+          <li>Includes every new app as it ships</li>
+          <li>Cancel anytime</li>
+        </ul>
+        <a class="btn btn-primary" href="https://buy.stripe.com/dRm4gz1H49Hf7KN7hm04805" style="text-align:center;">Subscribe monthly →</a>
+      </div>
+      <div class="plan featured">
+        <div class="tag">Best value · Lifetime</div>
+        <div class="price">$49<span> once</span></div>
+        <ul>
+          <li>Pro unlocked on every app, forever</li>
+          <li>Includes every new app as it ships</li>
+          <li>No recurring charge, ever</li>
+        </ul>
+        <a class="btn btn-primary" href="https://buy.stripe.com/5kQfZhfxU2eNe9b1X204806" style="text-align:center;">Get lifetime access →</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="apps">
+    <div class="section-head">
+      <h2>The vault</h2>
+      <p>Every app, updated live as they ship. Free tier always available — Pro unlocks the good stuff.</p>
+    </div>
+    <div class="grid" id="appGrid">
+      <div style="color:var(--muted);">Loading apps…</div>
+    </div>
+  </section>
+
+  <section id="redeem">
+    <div class="section-head">
+      <h2>Already have a key?</h2>
+    </div>
+    <div class="redeem">
+      <input type="text" id="redeemInput" placeholder="Paste your All-Access key">
+      <button class="btn btn-primary" onclick="redeemKey()">Verify & save</button>
+      <div id="redeemMsg"></div>
+    </div>
+  </section>
+
+  <footer>Built with Perplexity Computer · Day-by-day build log on <a href="https://github.com/ProfessorInfluence/thirty-day-webapp-challenge" target="_blank">GitHub</a> · Payments securely processed by Stripe</footer>
+</div>
+
+<script>
+const TRACKER_URL = 'https://raw.githubusercontent.com/ProfessorInfluence/thirty-day-webapp-challenge/main/progress.json';
+const _sb = window.supabase.createClient(
+  'https://ecgovzhaxxjwfozhacin.supabase.co',
+  'sb_publishable_WcP53YaWQaclDkytiQa48g_CkStxkWd'
+);
+const STORE_KEY = 'allaccess_license_key';
+
+function cardHtml(app){
+  const live = app.status === 'done';
+  return `
+    <div class="card ${live ? 'live' : 'pending'}">
+      <div class="card-top">
+        <span class="day-badge">DAY ${app.day}</span>
+        <span class="${live ? 'status-live' : 'status-pending'}">${live ? 'LIVE' : 'COMING SOON'}</span>
+      </div>
+      <h3>${app.name}</h3>
+      <div class="idea">${app.idea}</div>
+      ${live ? `
+        <div class="card-actions">
+          <a class="a-try" href="${app.live_url}" target="_blank">Try free</a>
+          <a class="a-buy" href="${app.stripe_payment_link}" target="_blank">Pro $${app.price_usd}${app.billing==='monthly' ? '/mo' : ''}</a>
+        </div>` : ''
+      }
+    </div>`;
+}
+
+async function loadApps(){
+  try{
+    const res = await fetch(TRACKER_URL + '?t=' + Date.now());
+    const data = await res.json();
+    const apps = data.apps.sort((a,b) => a.day - b.day);
+    document.getElementById('appGrid').innerHTML = apps.map(cardHtml).join('');
+    const liveCount = apps.filter(a => a.status === 'done').length;
+    document.getElementById('statLive').textContent = liveCount;
+    document.getElementById('statDay').textContent = Math.max(liveCount, 1);
+  }catch(e){
+    document.getElementById('appGrid').innerHTML = '<div style="color:var(--muted);">Could not load the app list right now — check back shortly.</div>';
+  }
+}
+
+async function redeemKey(){
+  const val = document.getElementById('redeemInput').value.trim();
+  const msg = document.getElementById('redeemMsg');
+  if(!val) return;
+  msg.textContent = 'Checking…';
+  try{
+    const { data } = await _sb.rpc('check_license', { p_key: val });
+    if (data === true){
+      localStorage.setItem(STORE_KEY, val);
+      msg.innerHTML = '✅ Valid! Paste this same key into any app\'s "All-Access Pass" box (bottom-right corner) to unlock Pro there too.';
+    } else {
+      msg.textContent = 'Key not found — double check it, or reach out if you just purchased.';
+    }
+  }catch(e){ msg.textContent = 'Error checking key — try again in a moment.'; }
+}
+
+async function handleSuccessReturn(){
+  const params = new URLSearchParams(window.location.search);
+  const sid = params.get('session_id');
+  if(!sid) return;
+  const box = document.getElementById('successBox');
+  box.innerHTML = `<div class="success-box"><h2>🎉 Payment received!</h2><p style="color:var(--muted);">Generating your All-Access key — this can take a few minutes.</p><div id="keyArea"></div></div>`;
+  let attempts = 0;
+  const poll = async () => {
+    attempts++;
+    try{
+      const { data } = await _sb.rpc('get_license_by_session', { p_session_id: sid });
+      if (data){
+        localStorage.setItem(STORE_KEY, data);
+        document.getElementById('keyArea').innerHTML = `<div class="key-display">${data}</div><p style="color:var(--muted);font-size:14px;">Saved to this browser. Paste this key into any app's "All-Access Pass" box (bottom-right corner) to unlock Pro there.</p>`;
+        return;
+      }
+    }catch(e){}
+    if (attempts < 40) setTimeout(poll, 8000);
+    else document.getElementById('keyArea').innerHTML = `<p style="color:var(--muted);">Still processing — refresh this page in a few minutes, or use the "Already have a key?" box below once it's ready.</p>`;
+  };
+  poll();
+}
+
+loadApps();
+handleSuccessReturn();
+</script>
+</body>
+</html>
