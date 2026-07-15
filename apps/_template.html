@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>{{NAME}} — {{TAGLINE}} | ShipVault</title>
+<meta name="description" content="{{META_DESCRIPTION}}" />
+<link rel="canonical" href="https://shipvault.vercel.app/apps/{{SLUG}}.html" />
+<meta property="og:title" content="{{NAME}} — {{TAGLINE}}" />
+<meta property="og:description" content="{{META_DESCRIPTION}}" />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://shipvault.vercel.app/assets/{{SLUG}}.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "{{NAME}}",
+  "applicationCategory": "{{SCHEMA_CATEGORY}}",
+  "operatingSystem": "Web",
+  "description": "{{META_DESCRIPTION}}",
+  "offers": {
+    "@type": "Offer",
+    "price": "{{PRICE}}",
+    "priceCurrency": "USD"
+  },
+  "url": "{{LIVE_URL}}"
+}
+</script>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <a class="logo" href="/"><span class="dot"></span> ShipVault</a>
+    <div class="nav-links"><a href="/#apps">Apps</a><a href="/#pricing">All-Access Pass</a></div>
+  </nav>
+
+  <div class="breadcrumb"><a href="/">ShipVault</a> / <a href="/#apps">Apps</a> / {{NAME}}</div>
+
+  <div class="detail-hero">
+    <div>
+      <div class="day-tag">DAY {{DAY}} OF 30 · LIVE</div>
+      <h1>{{HEADLINE}}</h1>
+      <p class="lede">{{LEDE}}</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="{{LIVE_URL}}" target="_blank" rel="noopener">Try {{NAME}} free →</a>
+        <a class="btn" href="{{PAYMENT_LINK}}" target="_blank" rel="noopener">Upgrade to Pro — ${{PRICE}}{{BILLING_SUFFIX}}</a>
+      </div>
+    </div>
+    <div class="shot-frame"><img src="/assets/{{SLUG}}.png" alt="{{NAME}} screenshot" loading="lazy" width="1356" height="600"></div>
+  </div>
+
+  <div class="feature-list">
+    {{FEATURES_HTML}}
+  </div>
+
+  <div class="faq">
+    {{FAQ_HTML}}
+  </div>
+
+  <div class="related">
+    <h3>Part of the ShipVault vault</h3>
+    <p>{{NAME}} is one of 30 apps shipping daily on ShipVault. Get the All-Access Pass to unlock Pro on every app — current and future — for one price.</p>
+    <a class="btn btn-primary btn-sm" href="/#pricing">See the All-Access Pass →</a>
+  </div>
+
+  <footer>Built with Perplexity Computer · <a href="{{GITHUB_REPO}}" target="_blank" rel="noopener">Source on GitHub</a> · Payments securely processed by Stripe</footer>
+</div>
+</body>
+</html>
