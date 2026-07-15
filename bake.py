@@ -31,7 +31,7 @@ def slugify(name):
 def card_html(app, has_page):
     live = app["status"] == "done"
     slug = slugify(app["name"])
-    title_html = f'<a href="/apps/{slug}.html">{app["name"]}</a>' if (live and has_page) else app["name"]
+    title_html = f'<a href="/apps/{slug}">{app["name"]}</a>' if (live and has_page) else app["name"]
     actions = ""
     if live:
         actions = (
@@ -85,7 +85,7 @@ def main():
     urls = [SITE_URL + "/"]
     for a in apps:
         if a["status"] == "done" and slugify(a["name"]) in existing_pages:
-            urls.append(f"{SITE_URL}/apps/{slugify(a['name'])}.html")
+            urls.append(f"{SITE_URL}/apps/{slugify(a['name'])}")
     sitemap = (
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
